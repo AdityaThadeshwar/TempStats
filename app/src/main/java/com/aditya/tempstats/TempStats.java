@@ -10,12 +10,16 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.widget.RemoteViews;
 
+import java.math.BigDecimal;
+
 /**
  * Implementation of App Widget functionality.
  */
 public class TempStats extends AppWidgetProvider {
 
     private static final String SYNC_CLICKED = "automaticWidgetSyncButtonClick";
+    private static float prevTemp = 0;
+    private static boolean initial = true;
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -41,11 +45,6 @@ public class TempStats extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
-//        for (int appWidgetId : appWidgetIds) {
-//            updateAppWidget(context, appWidgetManager, appWidgetId);
-//
-//        }
 
         RemoteViews remoteViews;
         ComponentName watchWidget;
@@ -83,9 +82,29 @@ public class TempStats extends AppWidgetProvider {
             watchWidget = new ComponentName(context, TempStats.class);
 
 
+            float diff = 0;
+
+            //Get temperature
             intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             float batteryTempF = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)) / 10;
-            String batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C";
+
+            //When update is tapped first time set prevTemp equal to current
+            if(initial == true){
+                prevTemp = batteryTempF;
+                initial = false;
+            }
+
+            else{
+                //Calculate difference and round to 2 places
+                diff = batteryTempF - prevTemp;
+                diff = BigDecimal.valueOf(diff).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+
+                //Update temp
+                prevTemp = batteryTempF;
+            }
+
+            //Set display value
+            String batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C" + " | " + diff;
 
             remoteViews.setTextViewText(R.id.appwidget_text, batteryTemp);
 
