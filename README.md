@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-Android widget to display Battery and CPU temperature
-=======
-# TempStats
->>>>>>> Initial commit
+Android widget to show battery temperature
