@@ -7,16 +7,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.BatteryManager;
-import android.text.TextPaint;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RemoteViews;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 /**
  * Implementation of App Widget functionality.
@@ -36,12 +28,11 @@ public class TempStats extends AppWidgetProvider {
         String cpuTemp = Float.toString(cpuTempF);
 
 
-        CharSequence widgetText = "Battery: " + batteryTemp + "C";
+        CharSequence widgetText = "Battery: " + batteryTemp + " " + (char) 0x00B0 + "C";
         CharSequence widgetText2 = "CPU: " + cpuTemp + "C";
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.temp_stats);
         views.setTextViewText(R.id.appwidget_text, widgetText);
-        views.setTextViewText(R.id.appwidget_text2, widgetText2);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -93,8 +84,8 @@ public class TempStats extends AppWidgetProvider {
 
 
             intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            float  batteryTempF   = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0)) / 10;
-            String batteryTemp = "Battery: " + Float.toString(batteryTempF) + "C";
+            float batteryTempF = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)) / 10;
+            String batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C";
 
             remoteViews.setTextViewText(R.id.appwidget_text, batteryTemp);
 

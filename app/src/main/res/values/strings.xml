@@ -2,5 +2,6 @@
     <string name="app_name">TempStats</string>
     <string name="appwidget_text">Battery</string>
     <string name="appwidget_text2">CPU</string>
+    <string name="button">Update</string>
     <string name="add_widget">Add widget</string>
 </resources>
