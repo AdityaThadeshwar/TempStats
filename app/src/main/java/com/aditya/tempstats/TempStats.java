@@ -20,6 +20,7 @@ public class TempStats extends AppWidgetProvider {
     private static final String SYNC_CLICKED = "automaticWidgetSyncButtonClick";
     private static float prevTemp = 0;
     private static boolean initial = true;
+    private static float diff = 0;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -82,9 +83,6 @@ public class TempStats extends AppWidgetProvider {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.temp_stats);
             watchWidget = new ComponentName(context, TempStats.class);
 
-
-            float diff = 0;
-
             //Get temperature
             intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             float batteryTempF = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)) / 10;
@@ -95,8 +93,10 @@ public class TempStats extends AppWidgetProvider {
                 initial = false;
             } else {
                 //Calculate difference and round to 2 places
-                diff = batteryTempF - prevTemp;
-                diff = BigDecimal.valueOf(diff).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+                if(batteryTempF - prevTemp != 0) {
+                    diff = batteryTempF - prevTemp;
+                    diff = BigDecimal.valueOf(diff).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+                }
 
                 //Update temp
                 prevTemp = batteryTempF;
