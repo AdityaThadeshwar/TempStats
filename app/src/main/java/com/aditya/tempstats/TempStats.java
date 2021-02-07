@@ -22,7 +22,6 @@ public class TempStats extends AppWidgetProvider {
     private static boolean initial = true;
     private static float diff = 0;
 
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
@@ -88,12 +87,12 @@ public class TempStats extends AppWidgetProvider {
             float batteryTempF = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)) / 10;
 
             //When update is tapped first time set prevTemp equal to current
-            if (initial == true) {
+            if (initial) {
                 prevTemp = batteryTempF;
                 initial = false;
             } else {
                 //Calculate difference and round to 2 places
-                if(batteryTempF - prevTemp != 0) {
+                if (batteryTempF - prevTemp != 0) {
                     diff = batteryTempF - prevTemp;
                     diff = BigDecimal.valueOf(diff).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
                 }
@@ -102,8 +101,17 @@ public class TempStats extends AppWidgetProvider {
                 prevTemp = batteryTempF;
             }
 
-            String batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C" + " | " + diff;
+            String batteryTemp = "";
 
+            if (diff > 0) {
+                batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C" + (char) 0x2191 + " " + Math.abs(diff);
+
+            } else if (diff < 0) {
+                batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C" + (char) 0x2193 + " " + Math.abs(diff);
+
+            } else {
+                batteryTemp = "Battery: " + batteryTempF + " " + (char) 0x00B0 + "C | 0";
+            }
             remoteViews.setTextViewText(R.id.appwidget_text, batteryTemp);
 
             appWidgetManager.updateAppWidget(watchWidget, remoteViews);
